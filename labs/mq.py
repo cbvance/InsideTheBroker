@@ -20,6 +20,8 @@ def parse_args(argv=None):
     s.add_argument("filters", nargs="+")
     s.add_argument("--qos", type=int, default=0,
                    choices=(0, 1, 2))
+    s.add_argument("--persist", action="store_true",
+                   help="clean session 0: keep the session")
     p = sub.add_parser("pub", help="publish one message")
     p.add_argument("topic")
     p.add_argument("message")
@@ -40,7 +42,8 @@ def show(topic, payload):
 async def main(argv=None):
     args = parse_args(argv)
     cid = args.id or f"lab-{args.cmd}"
-    c = Client(cid, keepalive=30, on_message=show)
+    clean = not getattr(args, "persist", False)
+    c = Client(cid, keepalive=30, clean=clean, on_message=show)
     try:
         await c.connect(args.host, args.port)
     except ConnectionRefusedError:
@@ -48,6 +51,8 @@ async def main(argv=None):
         raise SystemExit(f"no broker on {where}; start one "
                          "with: python -m broker")
     if args.cmd == "sub":
+        sp = "yes" if c.session_present else "no"
+        print(f"session present: {sp}", flush=True)
         pairs = [(f, args.qos) for f in args.filters]
         granted = await c.subscribe(pairs)
         for (f, _), g in zip(pairs, granted):
