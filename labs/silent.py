@@ -23,6 +23,8 @@ def parse_args(argv=None):
     a.add_argument("--id", default="lab-silent")
     a.add_argument("--keepalive", type=int, default=5)
     a.add_argument("--end", choices=ENDINGS, default="silence")
+    a.add_argument("--will-retain", action="store_true",
+                   help="ask the broker to retain the will")
     a.add_argument("--hold", type=float, default=2.0,
                    help="seconds to stay connected first "
                         "(not used by --end ping)")
@@ -33,7 +35,7 @@ def main(argv=None):
     args = parse_args(argv)
     ka = args.keepalive
     will = {"topic": f"lab/will/{args.id}", "payload": b"gone",
-            "qos": 0, "retain": False}
+            "qos": 0, "retain": args.will_retain}
     try:
         s = socket.create_connection((args.host, args.port))
     except ConnectionRefusedError:
