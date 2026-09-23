@@ -1,0 +1,5 @@
+# The broker, tap, edge node, and host use only the
+# Python standard library. These are for the tests.
+pytest
+paho-mqtt
+protobuf
