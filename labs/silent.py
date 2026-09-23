@@ -24,7 +24,8 @@ def parse_args(argv=None):
     a.add_argument("--keepalive", type=int, default=5)
     a.add_argument("--end", choices=ENDINGS, default="silence")
     a.add_argument("--hold", type=float, default=2.0,
-                   help="seconds to stay connected first")
+                   help="seconds to stay connected first "
+                        "(not used by --end ping)")
     return a.parse_args(argv)
 
 
@@ -33,9 +34,17 @@ def main(argv=None):
     ka = args.keepalive
     will = {"topic": f"lab/will/{args.id}", "payload": b"gone",
             "qos": 0, "retain": False}
-    s = socket.create_connection((args.host, args.port))
+    try:
+        s = socket.create_connection((args.host, args.port))
+    except ConnectionRefusedError:
+        where = f"{args.host}:{args.port}"
+        raise SystemExit(f"no broker on {where}; start one "
+                         "with: python -m broker")
     s.sendall(P.build_connect(args.id, ka, will=will))
     print("CONNACK", s.recv(4).hex(" "))
+    if args.end == "ping":
+        ping(s, ka)
+        return
     time.sleep(args.hold)
     if args.end == "disconnect":
         s.sendall(P.DISCONNECT_PKT)
@@ -51,12 +60,22 @@ def main(argv=None):
         print(f"going silent: expect the broker to end this "
               f"about {wait:g} s after the CONNECT")
         time.sleep(wait + 2)
-    elif args.end == "ping":
-        for n in range(3):
-            time.sleep(ka)
-            s.sendall(P.PINGREQ_PKT)
-            print(f"PINGREQ {n + 1}, reply", s.recv(2).hex(" "))
-        s.sendall(P.DISCONNECT_PKT)
+    s.close()
+
+
+def ping(s, ka):
+    """Keep the keepalive promise: never idle longer than ka.
+
+    Idle time counts from the last packet sent, which here is
+    the CONNECT, so the first PINGREQ goes out ka seconds
+    after it, not ka seconds after some other wait.
+    """
+    for n in range(3):
+        time.sleep(ka)
+        s.sendall(P.PINGREQ_PKT)
+        print(f"PINGREQ {n + 1}, reply", s.recv(2).hex(" "))
+    s.sendall(P.DISCONNECT_PKT)
+    print("sent DISCONNECT: the will should be discarded")
     s.close()
 
 
