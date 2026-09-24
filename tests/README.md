@@ -1,6 +1,6 @@
 # tests/
 
-The test suite: 76 tests that start real brokers on free
+The test suite: 84 tests that start real brokers on free
 ports and connect real clients.
 
 | File | What it checks |
@@ -9,6 +9,7 @@ ports and connect real clients.
 | `test_topics.py` | Wildcard matching and filter validation. |
 | `test_broker.py` | Routing, retained messages, wills, keepalive expiry, QoS 1 and 2, persistent sessions, takeover, protocol violations, Paho interop. |
 | `test_sparkplug.py` | Codec round trips for every datatype, and a cross-check against Google's protobuf runtime. |
+| `test_tracker.py` | Sparkplug rules one message at a time: aliases, never-born metrics, datatype changes, seq wrap, birth rules, device death, STATE JSON. |
 | `test_edge.py` | Full sessions: births, writes, rebirth, death, stale death, store and forward, gap-triggered rebirth, aliases, Modbus. |
 
 ```
