@@ -13,10 +13,25 @@ library only:
 | `tap/`    | Hand-built Sparkplug B protobuf codec and a read-only tap that checks seq, bdSeq, births, and deaths the way a host would. |
 | `edge/`   | Sparkplug B study edge node with its own MQTT client built from `broker/wire.py`. Simulated or Modbus TCP device, report by exception, commands, rebirth, primary host STATE, store and forward. |
 | `host/`   | Minimal primary host application: STATE, tag model, rebirth requests, and writes. |
-| `labs/`   | Lab helpers, including a tiny Modbus TCP simulator. |
+| `labs/`   | Lab tools: Modbus TCP simulator, connection endings, a pub/sub client, a Sparkplug decoder, and a report-by-exception counter. |
 
 Lines are kept to 64 characters so the repository matches
 the printed listings in the book.
+
+## The printed version
+
+The code exactly as printed in the book is tagged
+`v1.0-book`. The `main` branch may move ahead with fixes;
+the tag never changes.
+
+```
+git clone https://github.com/cbvance/InsideTheBroker.git
+cd InsideTheBroker
+git checkout v1.0-book
+```
+
+Appendix C of the book walks through Git step by step.
+Report mistakes on the Issues tab.
 
 ## Warning
 
