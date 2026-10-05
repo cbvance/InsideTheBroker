@@ -165,3 +165,16 @@ def test_modbus_device(tmp_path):
             await until(lambda: sim.regs[3] == 615)
         server.close()
     run(go())
+
+
+def test_modbus_reads_do_not_overlap():
+    """A birth and the scanner may read at the same moment."""
+    async def go():
+        sim, server = await serve("127.0.0.1", 0)
+        mport = server.sockets[0].getsockname()[1]
+        dev = ModbusDevice("PLC1", "127.0.0.1", mport,
+                           regmap=MODBUS_MAP)
+        a, b = await asyncio.gather(dev.read(), dev.read())
+        assert set(a) == set(b) == {n for n, *_ in MODBUS_MAP}
+        server.close()
+    run(go())
