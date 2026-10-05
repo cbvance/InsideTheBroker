@@ -1,6 +1,6 @@
 # tests/
 
-The test suite: 85 tests that start real brokers on free
+The test suite: 87 tests that start real brokers on free
 ports and connect real clients.
 
 | File | What it checks |

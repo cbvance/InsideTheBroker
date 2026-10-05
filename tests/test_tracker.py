@@ -95,3 +95,15 @@ def test_state_must_be_json():
     ev = t.feed("spBv1.0/STATE/SCADA1",
                 b'{"online": true, "timestamp": 1}')
     assert kinds(ev) == ["STATE"]
+
+
+def test_historical_does_not_replace_current():
+    t = born()
+    t.feed(D.format("DDATA"),
+           pay(2, m("T", sp.DOUBLE, 5.0)))
+    old = Metric("T", None, 1, sp.DOUBLE, 1.0,
+                 is_historical=True)
+    ev = t.feed(D.format("DDATA"), pay(3, old))
+    assert "(hist)" in ev[0].text
+    assert t.nodes[("Lab", "Edge1")].devices["PLC1"] \
+        .metrics["T"][1] == 5.0

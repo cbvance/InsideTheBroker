@@ -1,7 +1,10 @@
 import asyncio
 import contextlib
 
+import pytest
+
 from broker.faults import Faults
+from edge.client import Client
 from edge.device import ModbusDevice, Point, SimDevice
 from edge.node import EdgeNode, changed
 from edge.__main__ import MODBUS_MAP
@@ -177,4 +180,14 @@ def test_modbus_reads_do_not_overlap():
         a, b = await asyncio.gather(dev.read(), dev.read())
         assert set(a) == set(b) == {n for n, *_ in MODBUS_MAP}
         server.close()
+    run(go())
+
+
+def test_disconnect_after_failed_connect():
+    """Ctrl+C while the broker is down must not crash."""
+    async def go():
+        c = Client("never-connected")
+        with pytest.raises(OSError):
+            await c.connect("127.0.0.1", 1)
+        await c.disconnect()
     run(go())
