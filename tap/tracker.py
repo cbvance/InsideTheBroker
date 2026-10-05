@@ -181,7 +181,8 @@ class Tracker:
             if m.datatype not in (None, born_type):
                 ev.append(Event("VIOLATION", where,
                                 f"{name} type changed"))
-            target.metrics[name][1] = m.value
+            if not m.is_historical:     # history is not "now"
+                target.metrics[name][1] = m.value
             hist = " (hist)" if m.is_historical else ""
             v = m.value
             if isinstance(v, float):
