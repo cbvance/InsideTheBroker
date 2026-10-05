@@ -55,6 +55,8 @@ class Client:
 
     async def disconnect(self):
         """Graceful: DISCONNECT, so the will is discarded."""
+        if self.writer is None:      # never connected
+            return
         if not self.closed.is_set():
             self.send(P.DISCONNECT_PKT)
             await self._drain()
