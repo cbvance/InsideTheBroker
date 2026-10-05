@@ -78,8 +78,18 @@ class ModbusDevice:
             self.points[n] = Point(n, dt, None, w, db)
         self.tid = 0
         self.stream = None
+        self.lock = asyncio.Lock()
 
     async def _rpc(self, pdu):
+        """One Modbus transaction at a time on this socket.
+
+        The scanner and a birth can both ask for a read at
+        once; the lock makes the second wait its turn.
+        """
+        async with self.lock:
+            return await self._transact(pdu)
+
+    async def _transact(self, pdu):
         if self.stream is None:
             self.stream = await asyncio.wait_for(
                 asyncio.open_connection(self.host, self.port),
@@ -92,8 +102,11 @@ class ModbusDevice:
         try:
             head = await asyncio.wait_for(
                 r.readexactly(7), self.timeout)
-            n = struct.unpack(">H", head[4:6])[0] - 1
-            reply = await r.readexactly(n)
+            tid, _, length, _ = struct.unpack(">HHHB", head)
+            if tid != self.tid:
+                raise IOError(f"transaction id {tid}, "
+                              f"expected {self.tid}")
+            reply = await r.readexactly(length - 1)
         except Exception:
             w.close()
             self.stream = None
