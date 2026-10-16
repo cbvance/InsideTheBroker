@@ -14,6 +14,7 @@ library only:
 | `edge/`   | Sparkplug B study edge node with its own MQTT client built from `broker/wire.py`. Simulated or Modbus TCP device, report by exception, commands, rebirth, primary host STATE, store and forward. |
 | `host/`   | Minimal primary host application: STATE, tag model, rebirth requests, and writes. |
 | `labs/`   | Lab tools: Modbus TCP simulator, connection endings, a pub/sub client, a Sparkplug decoder, and a report-by-exception counter. |
+| `demo/`   | The StudyBroker dashboard demo, live at https://broker.demo.learnscada.com: a simulated broker in your browser, with the trace, the Sparkplug picture, the fault knobs and the Chapter 19 labs. |
 
 Lines are kept to 64 characters so the repository matches
 the printed listings in the book.
@@ -81,6 +82,15 @@ with a real broker on 1883. Press Ctrl+C in the edge
 terminal and the node sends its own NDEATH before
 DISCONNECT. Close the window instead and the broker
 publishes the NDEATH will.
+
+## Try the dashboard demo
+
+https://broker.demo.learnscada.com shows the study broker the
+way the StudyBroker dashboard does: every packet in the trace,
+clients and their wills, the Sparkplug picture, the fault knobs
+and the Chapter 19 labs, each screen linked to its chapters. It
+runs a simulated broker in your browser, so there is nothing to
+install. See `demo/README.md`.
 
 ## Labs at a glance
 
