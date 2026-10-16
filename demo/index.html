@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StudyBroker demo</title>
+<meta name="description" content="A demo for the book Inside the Broker: the StudyBroker dashboard, driven by a simulated MQTT study broker running in your browser.">
+<link rel="stylesheet" href="app.css?v=2">
+</head>
+<body>
+
+<header class="status" role="banner" id="statusBar"></header>
+
+<div class="frame">
+  <nav aria-label="Screens" id="nav">
+    <button data-s="overview">Overview</button>
+    <button data-s="clients">Clients</button>
+    <button data-s="topics">Topics</button>
+    <button data-s="sparkplug">Sparkplug</button>
+    <button data-s="trace">Trace</button>
+    <button data-s="diags">Diagnostics</button>
+    <button data-s="faults">Faults</button>
+    <button data-s="labs">Labs</button>
+    <button data-s="notebook">Notebook</button>
+    <button data-s="system">System</button>
+    <div class="labrun" id="labRun" hidden></div>
+    <div class="mockflag"><b>DEMO</b> for the book <a href="https://learnscada.com/books/inside-the-broker/" target="_blank" rel="noopener"><i>Inside the Broker</i></a>. A simulated broker runs in this page; nothing is live. <button type="button" class="linkbtn" id="aboutBtn">About this demo</button></div>
+  </nav>
+  <main id="main">
+    <section class="scr" id="overview"></section>
+    <section class="scr" id="clients"></section>
+    <section class="scr" id="topics"></section>
+    <section class="scr" id="sparkplug"></section>
+    <section class="scr" id="trace"></section>
+    <section class="scr" id="diags"></section>
+    <section class="scr" id="faults"></section>
+    <section class="scr" id="labs"></section>
+    <section class="scr" id="notebook"></section>
+    <section class="scr" id="system"></section>
+  </main>
+</div>
+
+<dialog id="aboutDlg" class="dlg about" aria-labelledby="aboutTitle">
+  <h2 id="aboutTitle">StudyBroker: a demo for <i>Inside the Broker</i></h2>
+  <p>This is the dashboard for the study broker from the book <a href="https://learnscada.com/books/inside-the-broker/" target="_blank" rel="noopener"><i>Inside the Broker</i></a> by Charles Vance. Here it is driven by a <b>simulated</b> broker running in your browser: an edge node, a primary host, a member's client and the Sparkplug tap, all talking MQTT 3.1.1 and Sparkplug B, with every packet in the trace in the book's own format. Nothing connects to a real broker, and reloading the page starts it over.</p>
+  <table class="aboutt"><tbody>
+    <tr><td>Watch every packet</td><td><b>Trace</b>: filter, pause, click a line for its fields</td><td>Ch 2, 3</td></tr>
+    <tr><td>How connections end</td><td><b>Clients</b>: Kick one and watch its will fire; <b>Labs</b>: Connection endings</td><td>Ch 4, 6</td></tr>
+    <tr><td>Topics and retained messages</td><td><b>Topics</b>: test a filter, publish, clear a retained message</td><td>Ch 5, 6</td></tr>
+    <tr><td>Births, deaths, bdSeq and seq</td><td><b>Sparkplug</b>, and the tap events beside it</td><td>Ch 9 to 11</td></tr>
+    <tr><td>Breaking it on purpose</td><td><b>Labs</b>: run the Chapter 19 presets; <b>Faults</b>: turn the knobs</td><td>Ch 17, 19</td></tr>
+    <tr><td>Traffic at a glance</td><td><b>Diagnostics</b>: every packet colored by kind, and the wire drawn as a ladder</td><td>Ch 3, 7, 16</td></tr>
+  </tbody></table>
+  <p>Good first step: <b>Labs, Lab 1, Run preset</b>, then open Sparkplug and Diagnostics. Write your prediction in the <b>Notebook</b> first, the way Chapter 19 asks.</p>
+  <p class="note">The book's real broker, edge node and host are at <a href="https://github.com/cbvance/InsideTheBroker" target="_blank" rel="noopener">github.com/cbvance/InsideTheBroker</a>.</p>
+  <div class="dlgact"><button class="btn primary" id="aboutClose">Start exploring</button></div>
+</dialog>
+
+<dialog id="confirmDlg" class="dlg">
+  <form method="dialog">
+    <h2 id="confirmTitle"></h2>
+    <p id="confirmBody"></p>
+    <div class="dlgact"><button class="btn" value="no">Cancel</button><button class="btn danger" id="confirmYes" value="yes">OK</button></div>
+  </form>
+</dialog>
+
+<script src="sim.js?v=2"></script>
+<script src="ui.js?v=2"></script>
+</body>
+</html>
